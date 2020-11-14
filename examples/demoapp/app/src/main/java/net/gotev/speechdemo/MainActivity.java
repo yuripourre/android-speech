@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
     private SpeechProgressView progress;
     private LinearLayout linearLayout;
 
+    private boolean continuousSpeech = true;
+
     private TextToSpeech.OnInitListener mTttsInitListener = new TextToSpeech.OnInitListener() {
         @Override
         public void onInit(final int status) {
@@ -295,11 +297,16 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
 
         text.setText(result);
 
-        if (result.isEmpty()) {
-            Speech.getInstance().say(getString(R.string.repeat));
-
-        } else {
-            Speech.getInstance().say(result);
+        if (continuousSpeech) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Speech.getInstance().shutdown();
+                    Speech.init(MainActivity.this, getPackageName());
+                    // Simulates button click
+                    onButtonClick();
+                }
+            });
         }
     }
 
