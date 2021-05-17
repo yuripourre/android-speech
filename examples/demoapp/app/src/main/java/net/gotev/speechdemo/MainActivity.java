@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
     private LinearLayout linearLayout;
 
     private boolean continuousSpeech = true;
+    private boolean repeatOnResult = false;
 
     private TextToSpeech.OnInitListener mTttsInitListener = new TextToSpeech.OnInitListener() {
         @Override
@@ -296,6 +297,15 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
         linearLayout.setVisibility(View.GONE);
 
         text.setText(result);
+
+        if (repeatOnResult) {
+            if (result.isEmpty()) {
+                Speech.getInstance().say(getString(R.string.repeat));
+
+            } else {
+                Speech.getInstance().say(result);
+            }
+        }
 
         if (continuousSpeech) {
             runOnUiThread(new Runnable() {
