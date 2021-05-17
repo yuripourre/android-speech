@@ -17,13 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.gotev.speech.*;
-import net.gotev.speech.ui.SpeechProgressView;
-import net.gotev.toyproject.R;
-
-import java.io.IOException;
-import java.util.*;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,11 +25,22 @@ import androidx.core.content.ContextCompat;
 
 import com.harium.suneidesis.http.client.SunbotHttpClient;
 
-import org.jetbrains.annotations.NotNull;
+import net.gotev.speech.GoogleVoiceTypingDisabledException;
+import net.gotev.speech.Logger;
+import net.gotev.speech.Speech;
+import net.gotev.speech.SpeechDelegate;
+import net.gotev.speech.SpeechRecognitionNotAvailable;
+import net.gotev.speech.SpeechUtil;
+import net.gotev.speech.SupportedLanguagesListener;
+import net.gotev.speech.TextToSpeechCallback;
+import net.gotev.speech.UnsupportedReason;
+import net.gotev.speech.ui.SpeechProgressView;
+import net.gotev.toyproject.R;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements SpeechDelegate {
 
@@ -53,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
     private SpeechProgressView progress;
     private LinearLayout linearLayout;
     private SunbotHttpClient client;
+    private Locale locale;
 
     private boolean continuousSpeech = true;
     private boolean repeatOnResult = false;
@@ -140,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
                         .setItems(items, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Locale locale;
-
                                 if (Build.VERSION.SDK_INT >= 21) {
                                     locale = Locale.forLanguageTag(supportedLanguages.get(i));
                                 } else {
@@ -153,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
                                         locale = new Locale(langParts[0]);
                                     }
                                 }
+
 
                                 Speech.getInstance().setLocale(locale);
                                 client.language(locale.getLanguage());
@@ -329,6 +333,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
                 public void run() {
                     Speech.getInstance().shutdown();
                     Speech.init(MainActivity.this, getPackageName());
+                    Speech.getInstance().setLocale(locale);
                     // Simulates button click
                     onButtonClick();
                 }
