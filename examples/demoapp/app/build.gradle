@@ -34,6 +34,9 @@ dependencies {
     // Core library
     androidTestImplementation "androidx.test:core:$androidx_test_core_version"
 
+    // Sunbot integration
+    implementation 'com.harium.suneidesis.sunbot:http-client:0.4.0'
+
     // AndroidJUnitRunner and JUnit Rules
     androidTestImplementation "androidx.test:runner:$androidx_test_runner_version"
     androidTestImplementation "androidx.test:rules:$androidx_test_rules_version"

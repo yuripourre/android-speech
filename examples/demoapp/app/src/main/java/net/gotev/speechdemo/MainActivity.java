@@ -21,6 +21,7 @@ import net.gotev.speech.*;
 import net.gotev.speech.ui.SpeechProgressView;
 import net.gotev.toyproject.R;
 
+import java.io.IOException;
 import java.util.*;
 
 import androidx.annotation.NonNull;
@@ -29,10 +30,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.harium.suneidesis.http.client.SunbotHttpClient;
+
+import org.jetbrains.annotations.NotNull;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity implements SpeechDelegate {
 
     private final int PERMISSIONS_REQUEST = 1;
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    private final String IP = "http://192.168.1.121";
+    private final String PORT = "11883";
 
     private ImageButton button;
     private Button speak;
@@ -40,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
     private EditText textToSpeech;
     private SpeechProgressView progress;
     private LinearLayout linearLayout;
+    private SunbotHttpClient client;
 
     private boolean continuousSpeech = true;
     private boolean repeatOnResult = false;
@@ -69,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
         setContentView(R.layout.activity_main);
 
         Speech.init(this, getPackageName(), mTttsInitListener);
+        client = new SunbotHttpClient();
 
         linearLayout = findViewById(R.id.linearLayout);
 
@@ -141,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
                                 }
 
                                 Speech.getInstance().setLocale(locale);
+                                client.language(locale.getLanguage());
                                 Toast.makeText(MainActivity.this, "Selected: " + items[i], Toast.LENGTH_LONG).show();
                             }
                         })
@@ -297,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
         linearLayout.setVisibility(View.GONE);
 
         text.setText(result);
+        client.sendMessage(IP + ":" + PORT, result);
 
         if (repeatOnResult) {
             if (result.isEmpty()) {
