@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements SpeechDelegate {
     private SpeechProgressView progress;
     private LinearLayout linearLayout;
 
-    private boolean continuousSpeech = true;
-    private boolean repeatOnResult = false;
+    private boolean continuousSpeech = false;
+    private boolean repeatOnResult = true;
 
     private TextToSpeech.OnInitListener mTttsInitListener = new TextToSpeech.OnInitListener() {
         @Override
